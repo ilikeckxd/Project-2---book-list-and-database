@@ -1,0 +1,48 @@
+"""
+Dealing with storing and retrieving books from a list.
+"""
+books = []
+
+
+def add_book(name, author):
+    books.append({'name': name, 'author': author, 'read': False})
+    print('\nThe book you just added is: '
+          f'\nTitle: 《{books[-1]["name"]}》'
+          f'\nAuthor: {books[-1]["author"]}')
+
+def book_list():
+    if books == []:
+        print("No book in the list.")
+    else:
+        for book in books:
+            read = 'Yes' if book["read"] else 'Not yet'   #if book["read"] (is True)
+            print(f'\n\nTitle: 《{book["name"]}》'
+                  f'\nAuthor: {book["author"]}'
+                  f'\nRead?: {read}')
+
+
+def mark_book_as_read(book_title):
+    for book in books:
+        if book['name'] == book_title:
+            book['read'] = True
+            print(f'《{book["name"]}》 is marked as read.')
+            break
+    else:
+        print(f'《{book_title}》 is not in the list.')
+
+
+def delete_book(book_title):
+    global books
+    books = [book for book in books if book['name'] != book_title] #如果只有這一行 無法執行
+    #因為python會把第一個books視為新創的local變數 沒有連結到global的資訊
+
+
+'''  
+    for book in books:
+        if book['name'] == book_title:
+            books.remove(book)
+            print(f'《{book["name"]}》 is removed.')
+            break
+    else:
+        print(f'《{book_title}》 is not in the list.')
+'''
