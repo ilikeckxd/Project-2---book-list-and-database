@@ -37,7 +37,9 @@ def delete_book(book_title):
     #因為python會把第一個books視為新創的local變數 沒有連結到global的資訊
 
 
-'''  
+''' Jose說for loop裡 如果要remove 其實有點confusing 如下↓
+所以最好用新增的方式更改 如上
+
     for book in books:
         if book['name'] == book_title:
             books.remove(book)
