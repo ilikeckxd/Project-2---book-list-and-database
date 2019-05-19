@@ -1,0 +1,52 @@
+"""
+Dealing with storing and retrieving books from a csv file.
+Format of the csv file:
+
+name,author,read\n
+name,author,read\n
+name,author,read\n
+
+"""
+books_file = "book_list.txt"  # database
+
+
+def create_book_table():
+    with open(books_file, 'w'):
+        pass # to avoid FileNotFoundError 建立book_list.txt檔 以免它不存在
+
+
+def add_book(name, author):
+    with open(books_file, 'a') as file:
+        file.write(f'{name},{author},0\n')  # 因為儲存的database不是python檔，所以用0表示false
+
+
+def book_list():
+    with open(books_file, 'r') as file:
+        books = [line.strip().split(',') for line in file.readlines()]  # [[name, author, read], [name, author, read],...]
+    return [{'name': line[0], 'author': line[1], 'read': line[2]}
+            for line in books]
+
+
+def mark_book_as_read(book_title):
+    books = book_list()
+    for book in books:
+        if book['name'] == book_title:
+            book['read'] = '1'  # 此時改的是data這個list, books其實沒變...所以最後要重新寫入
+            print(f'《{book_title}》 is marked as read.')
+            break
+    else:
+        print(f'《{book_title}》 is not in the list.')
+    _save_all_books(books)
+
+
+# 前面有"_"是提醒其他工程師不要主動call this function，這function是其他function會用到的(private function)
+def _save_all_books(books):
+    with open(books_file, 'w') as file:
+        for book in books:
+            file.write(f'{book["name"]},{book["author"]},{book["read"]}\n')
+
+
+def delete_book(book_title):
+    books = book_list()
+    books = [book for book in books if book['name'] != book_title]
+    _save_all_books(books)
