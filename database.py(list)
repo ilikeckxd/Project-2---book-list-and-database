@@ -11,14 +11,14 @@ def add_book(name, author):
           f'\nAuthor: {books[-1]["author"]}')
 
 def book_list():
-    if books == []:
-        print("No book in the list.")
-    else:
+    if books:  # if books != []
         for book in books:
             read = 'Yes' if book["read"] else 'Not yet'   #if book["read"] (is True)
             print(f'\n\nTitle: 《{book["name"]}》'
                   f'\nAuthor: {book["author"]}'
-                  f'\nRead?: {read}')
+                  f'\nRead?: {read}')        
+    else:   # books = []
+        print("No book in the list.")
 
 
 def mark_book_as_read(book_title):
