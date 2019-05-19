@@ -1,0 +1,68 @@
+# app.py: UI (user interface) 使用者不需要也不用care API的資料庫是list,csv或是JSON等
+# database.py: API (application programming interface)
+
+from utils import database
+
+
+USER_CHOICE = '''
+Enter:
+- 'a' to add a new book
+- 'l' to list all books
+- 'r' to mark a book as read
+- 'd' to delete a book
+- 'q' to quit
+
+Your choice: 
+'''
+# multi-line string用這種方式表達 '''OOXX''' 或 """OOXX"""
+
+
+def menu():
+    database.create_book_table()
+    user_input = input(USER_CHOICE)
+    while user_input != 'q':
+        if user_input == 'a':
+            prompt_add_book()
+        elif user_input == 'l':
+            show_book_list()
+        elif user_input == 'r':
+            prompt_mark_book()
+        elif user_input == 'd':
+            prompt_delete_book()
+        else:
+            print('Not the command we expect. Try again.')
+
+        user_input = input(USER_CHOICE)
+    print('The program ends.')
+
+
+def prompt_add_book():  # prompt關鍵字用於提醒自己需要user輸入資訊
+    name = input("Enter the book title: ")
+    author = input("Enter the author: ")
+    database.add_book(name, author)
+# 跟database互動用此種方式表達 就像不能直接使用database裡的list(books)一樣
+# 除非用database.books
+
+
+def show_book_list():
+    books = database.book_list()
+    if books:
+        for book in books:
+            read = 'Yes' if book["read"] == '1' else 'Not yet'
+            print(f'\nTitle: 《{book["name"]}》by {book["author"]}'
+                  f'\nRead?: {read}')
+    else:
+        print("There's no book in the list.")
+
+
+def prompt_mark_book():
+    book_title = input("Enter the book title: ")
+    database.mark_book_as_read(book_title)
+
+
+def prompt_delete_book():
+    book_title = input("Enter the book title: ")
+    database.delete_book(book_title)
+
+
+menu()
