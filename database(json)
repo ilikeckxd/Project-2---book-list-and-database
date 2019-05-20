@@ -1,0 +1,53 @@
+"""
+Dealing with storing and retrieving books from a JSON file.
+Format of the JSON file: list of dictionaries
+
+[
+{"name":name,"author":author,"read":False},
+{"name":name,"author":author,"read":False},
+{"name":name,"author":author,"read":True}
+]                                  #JSON可以存boolean
+
+
+"""
+import json
+books_file = "books.json"  # database
+
+
+def create_book_table():
+    with open(books_file, 'w') as file:
+        json.dump([], file)  # "empty" is not a valid json file.
+
+
+def add_book(name, author):  # 在json檔中，有[]，所以不能直接append
+    books = book_list()
+    books.append({"name": name, "author": author, "read": False})
+    _save_all_books(books)
+
+
+def book_list():
+    with open(books_file, 'r') as file:
+        return json.load(file)  # gives us a list
+
+
+def _save_all_books(books):
+    with open(books_file, 'w') as file:
+        json.dump(books, file)
+
+
+def mark_book_as_read(book_title):
+    books = book_list()
+    for book in books:
+        if book['name'] == book_title:
+            book['read'] = True  # 此時改的是data這個list, books其實沒變...所以最後要重新寫入
+            print(f'《{book_title}》 is marked as read.')
+            break
+    else:
+        print(f'《{book_title}》 is not in the list.')
+    _save_all_books(books)
+
+
+def delete_book(book_title):
+    books = book_list()
+    books = [book for book in books if book['name'] != book_title]
+    _save_all_books(books)
