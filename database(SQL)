@@ -1,0 +1,65 @@
+from typing import List, Dict, Union
+import sqlite3
+
+# type hinting
+Book = Dict[str, Union[str, int]]  # create a new TYPE
+
+
+def create_book_table() -> None:  # return None(其實所有函數如果不特別設定 都return None)
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('CREATE TABLE IF NOT EXISTS books(name text primary key, author text, read integer)')
+    
+    connection.commit()
+    connection.close()
+
+
+def add_book(name: str, author: str) -> None:
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute('INSERT INTO books VALUES(?, ?, 0)', (name, author))
+    # cursor.execute(f'INSERT INTO books VALUES("{name}", "{author}", 0)')
+    # 用f' string有機會發生SQL injection attack，所以用?跟tuple代替
+    except sqlite3.IntegrityError:
+        print('The book already exists.')
+    # 不允許完全一樣的資料(name, author)
+
+    connection.commit()
+    connection.close()
+
+
+def book_list() -> List[Book]:
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT * FROM books')
+    books = [{'name': row[0], 'author': row[1], 'read': row[2]} for row in cursor.fetchall()]
+    # 單純fetchall是list of tuples
+
+    # connection.commit() <<<不需要 因為沒有丟什麼到資料庫 只是讀取而已
+    connection.close()
+
+    return books
+
+
+def mark_book_as_read(book_title: str) -> None:
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('UPDATE books SET read=1 WHERE name=?', (book_title,))  # 記得逗號才會變tuple
+
+    connection.commit()
+    connection.close()
+
+
+def delete_book(book_title: str) -> None:
+    connection = sqlite3.connect('data.db')
+    cursor = connection.cursor()
+
+    cursor.execute('DELETE FROM books WHERE name=?', (book_title,))
+
+    connection.commit()
+    connection.close()
